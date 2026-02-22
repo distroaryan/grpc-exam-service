@@ -1,0 +1,55 @@
+syntax="proto3";
+package exam;
+
+option go_package = "generate/exam";
+
+// Exam Service, containing all types of RPC methods
+service ExamService {
+  // Unary
+  rpc GetExamResult(GetExamResultRequest) returns (GetExamResultResponse);
+  // Server streaming
+  rpc StreamExamResults(StreamExamResultsRequest) returns(stream GetExamResultResponse);
+  // Client streaming
+  rpc SubmitExamResults(stream SubmitExamResultsRequest) returns (SubmitExamResultsResponse);
+  // Bidirectional streaming
+  rpc LiveExamQuery(stream GetExamResultRequest) returns (stream GetExamResultResponse);
+}
+
+// We ask for the student exam result by providing student and exam id
+message GetExamResultRequest {
+  string student_id = 1;
+  string exam_id    = 2;
+}
+
+// Send back student info and corresponding exam info
+message GetExamResultResponse {
+  string student_name  = 1;
+  string subject_name  = 2;
+  int32  mark_obtained = 3;
+  int32  total_marks   = 4;
+  string grade         = 5;
+}
+
+// We ask for a list of exam results for a specific student
+message StreamExamResultsRequest {
+  string          student_id = 1;
+  repeated string exam_ids   = 2;
+}
+
+// We are submitting a list of exams results for a specific student
+message SubmitExamResultsRequest {
+  string student_id     = 1;
+  string exam_id        = 2;
+  int32  marks_obtained = 3;
+  int32  total_marks    = 4;
+}
+
+// We return the student percentage and grade according to the recieved exams info
+message SubmitExamResultsResponse {
+  string student_id           = 1;
+  int32  total_exams          = 2;
+  int32  total_marks_obtained = 3;
+  int32  total_possible_marks = 4;
+  float  percentage           = 5;
+  string grade                = 6;
+}
