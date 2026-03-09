@@ -1,4 +1,4 @@
-.PHONY: proto server client_unary client_server client_client client_bidirectional
+.PHONY: proto server client_unary client_server client_client client_bidirectional bench
 
 proto:
 	protoc 		--proto_path=proto 		--go_out=proto 		--go-grpc_out=proto 		proto/*.proto
@@ -17,5 +17,8 @@ client_client:
 	go run client/main.go client
 	
 client_bidirectional:
-	go run client/main.go bidirectional 
-	
+	go run client/main.go bidirectional
+
+test-load:
+	go test -bench=. -benchmem -benchtime=5s ./tests/load_test/...
+	@echo "Benchmark run complete."

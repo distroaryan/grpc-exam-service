@@ -2,6 +2,7 @@ package servers
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/distroaryan/grpc-exam-service/proto/generate/exam"
 )
@@ -10,18 +11,13 @@ func (s *ExamServiceServer) StreamExamResults(req *exam.StreamExamResultsRequest
 	studentId := req.StudentId
 	examIds := req.ExamIds
 
-	found := false
 
 	for _, examId := range examIds {
 		key := fmt.Sprintf("%s_%s", studentId, examId)
 		if val, isExist := s.examData[key]; isExist {
 			stream.Send(val)
-			found = true
 		}
-
-		if !found {
-			return fmt.Errorf("exam results not found for student ID %s and exam IDs %v", studentId, examIds)
-		}
+		time.Sleep(2 * time.Second)
 	}
 	return nil
 }
